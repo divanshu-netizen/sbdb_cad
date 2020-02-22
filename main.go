@@ -1,13 +1,14 @@
 package main
 
 import (
-	"news/internal/services"
+	"log"
+	http2 "net/http"
+	"neo/internal/http"
 )
 
 func main() {
-	neo := services.NewNeoService()
-	_, err := neo.FindNeoBy(services.NeoQueryOptions{})
-	if err != nil {
-		println(err)
-	}
+	handler := http.NewRequestHandler()
+	println("noreyaga")
+	err := http2.ListenAndServe(":8080", handler)
+	log.Fatalln(err)
 }

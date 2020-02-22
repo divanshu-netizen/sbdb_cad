@@ -1,8 +1,4 @@
-package services
-
-import (
-	"news/internal/http"
-)
+package main
 
 type Neo struct {
 	Des       string `json:"destination"`
@@ -53,7 +49,7 @@ type NeoFinder interface {
 type NeoService struct {
 	BaseUrl string
 	Neos    map[string]Neo
-	http.Getter
+	Getter
 	Mapper
 	QueryStringBuilder
 }
@@ -62,7 +58,7 @@ func NewNeoService() *NeoService {
 	return &NeoService{
 		BaseUrl:            "https://ssd-api.jpl.nasa.gov/cad.api?",
 		Neos:               make(map[string]Neo),
-		Getter:             new(http.Requester),
+		Getter:             new(Requester),
 		Mapper:             NewNeoMapper(),
 		QueryStringBuilder: NewQueryBuilder(),
 	}
