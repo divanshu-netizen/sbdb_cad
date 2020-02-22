@@ -1,4 +1,4 @@
-package main
+package neos
 
 type Neo struct {
 	Des       string `json:"destination"`
@@ -32,7 +32,7 @@ type NeoQueryOptions struct {
 	Nea                 bool   `json:"nea"`
 	Comet               bool   `json:"comet"`
 	NeaComet            bool   `json:"neaComet"`
-	Neo                 bool   `json:"neo"`
+	Neo                 bool   `json:"neos"`
 	Kind                string `json:"kind"`
 	Spk                 string `json:"spk"`
 	Designation         string `json:"designation"`
@@ -46,25 +46,23 @@ type NeoFinder interface {
 	FindNeoBy(nqo NeoQueryOptions) ([]Neo, error)
 }
 
-type NeoService struct {
+type neoService struct {
 	BaseUrl string
-	Neos    map[string]Neo
 	Getter
 	Mapper
 	QueryStringBuilder
 }
 
-func NewNeoService() *NeoService {
-	return &NeoService{
+func NewNeoService() *neoService {
+	return &neoService{
 		BaseUrl:            "https://ssd-api.jpl.nasa.gov/cad.api?",
-		Neos:               make(map[string]Neo),
 		Getter:             new(Requester),
 		Mapper:             NewNeoMapper(),
 		QueryStringBuilder: NewQueryBuilder(),
 	}
 }
 
-func (ns *NeoService) FindNeoBy(nqo NeoQueryOptions) ([]Neo, error) {
+func (ns *neoService) FindNeoBy(nqo NeoQueryOptions) ([]Neo, error) {
 	res, err := ns.Getter.Get(ns.BaseUrl + ns.QueryStringBuilder.Build(&nqo))
 	if err != nil {
 		return nil, err

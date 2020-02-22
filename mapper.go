@@ -1,4 +1,4 @@
-package main
+package neos
 
 import (
 	"encoding/json"
@@ -21,8 +21,7 @@ type Decoder interface {
 	Decode(input interface{}, output interface{}) error
 }
 
-type NeoDecoder struct {
-}
+type NeoDecoder struct{}
 
 func (nd *NeoDecoder) Decode(input interface{}, output interface{}) error {
 	err := mapstructure.Decode(input, output)

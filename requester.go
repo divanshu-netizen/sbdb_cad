@@ -1,4 +1,4 @@
-package main
+package neos
 
 import (
 	"net/http"
@@ -8,8 +8,7 @@ type Getter interface {
 	Get(url string) (resp *http.Response, err error)
 }
 
-type Requester struct {
-}
+type Requester struct{}
 
 func (r *Requester) Get(url string) (resp *http.Response, err error) {
 	res, err := http.Get(url)

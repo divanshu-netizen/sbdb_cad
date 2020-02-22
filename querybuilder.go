@@ -1,4 +1,4 @@
-package main
+package neos
 
 import (
 	"fmt"
@@ -79,7 +79,7 @@ func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
 		case "NeaComet":
 			qp += "nea-comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Neo":
-			qp += "neo=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
+			qp += "neos=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Kind":
 			qp += "kind=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Spk":
@@ -93,7 +93,7 @@ func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
 		case "limit":
 			qp += "limit=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "FullName":
-			qp += "fullname=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
+			qp += "fullname=" + fmt.Sprintf("%v", fields.Field(field).Interface())
 		}
 	}
 
