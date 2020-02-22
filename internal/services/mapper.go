@@ -1,10 +1,10 @@
-package httprequest
+package services
 
 import (
 	"encoding/json"
+	"errors"
 	"github.com/mitchellh/mapstructure"
 	"net/http"
-	"news/internal/services"
 )
 
 type NeoResponse struct {
@@ -34,7 +34,7 @@ func (nd *NeoDecoder) Decode(input interface{}, output interface{}) error {
 }
 
 type Mapper interface {
-	Map(response *http.Response) ([]services.Neo, error)
+	Map(response *http.Response) ([]Neo, error)
 }
 
 type NeoMapper struct {
@@ -47,7 +47,7 @@ func NewNeoMapper() *NeoMapper {
 	}
 }
 
-func (nm *NeoMapper) Map(res *http.Response) ([]services.Neo, error) {
+func (nm *NeoMapper) Map(res *http.Response) ([]Neo, error) {
 	neoRes := new(NeoResponse)
 
 	err := json.NewDecoder(res.Body).Decode(neoRes)
@@ -55,11 +55,15 @@ func (nm *NeoMapper) Map(res *http.Response) ([]services.Neo, error) {
 		return nil, err
 	}
 
+	if neoRes.Count == "0" {
+		return nil, errors.New("no results were found for this search")
+	}
+
 	return nm.mapNeoResToNeo(neoRes)
 }
 
-func (nm *NeoMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]services.Neo, error) {
-	var neos []services.Neo
+func (nm *NeoMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]Neo, error) {
+	var neos []Neo
 
 	for _, res := range neoRes.Data {
 		n, err := nm.mapNeoResArrayToStruct(res, neoRes.Fields)
@@ -73,12 +77,12 @@ func (nm *NeoMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]services.Neo, error)
 	return neos, nil
 }
 
-func (nm *NeoMapper) mapNeoResArrayToStruct(res []string, fields []string) (*services.Neo, error) {
+func (nm *NeoMapper) mapNeoResArrayToStruct(res []string, fields []string) (*Neo, error) {
 	mappedNeo := make(map[string]string)
 	for i, field := range res {
 		mappedNeo[fields[i]] = field
 	}
-	result := &services.Neo{}
+	result := &Neo{}
 	err := mapstructure.Decode(mappedNeo, result)
 	if err != nil {
 		return nil, err
