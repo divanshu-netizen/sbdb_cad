@@ -5,6 +5,7 @@ import (
 	"github.com/google/go-querystring/query"
 	"net/url"
 	"reflect"
+	"strings"
 )
 
 type Options struct {
@@ -43,6 +44,11 @@ func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
 	var qp string
 	for field := 0; field < fields.Type().NumField(); field++ {
 		fieldName := fields.Type().Field(field).Name
+		fieldVal := fields.Field(field)
+		if len(fieldVal.String()) == 0 {
+			fieldName = ""
+		}
+
 		switch fieldName {
 		case "DateMin":
 			qp += "date-min=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
@@ -91,5 +97,6 @@ func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
 		}
 	}
 
-	return qp
+
+	return strings.TrimSuffix(qp, "&")
 }

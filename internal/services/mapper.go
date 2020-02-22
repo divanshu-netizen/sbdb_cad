@@ -82,6 +82,7 @@ func (nm *NeoMapper) mapNeoResArrayToStruct(res []string, fields []string) (*Neo
 	for i, field := range res {
 		mappedNeo[fields[i]] = field
 	}
+
 	result := &Neo{}
 	err := mapstructure.Decode(mappedNeo, result)
 	if err != nil {

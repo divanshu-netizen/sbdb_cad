@@ -1,4 +1,4 @@
-package httprequest
+package http
 
 import (
 	"net/http"
