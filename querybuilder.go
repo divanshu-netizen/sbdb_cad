@@ -1,4 +1,4 @@
-package neos
+package sbdb
 
 import (
 	"fmt"
@@ -26,7 +26,7 @@ func (b *OVC) Values(v interface{}) (url.Values, error) {
 }
 
 type QueryStringBuilder interface {
-	Build(nqo *NeoQueryOptions) string
+	Build(nqo *SmallBodyOptions) string
 }
 
 type queryBuilder struct {
@@ -39,7 +39,7 @@ func NewQueryBuilder() *queryBuilder {
 	}
 }
 
-func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
+func (qb *queryBuilder) Build(nqo *SmallBodyOptions) string {
 	fields := reflect.Indirect(reflect.ValueOf(nqo))
 	var qp string
 	for field := 0; field < fields.Type().NumField(); field++ {
@@ -78,8 +78,8 @@ func (qb *queryBuilder) Build(nqo *NeoQueryOptions) string {
 			qp += "comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "NeaComet":
 			qp += "nea-comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
-		case "Neo":
-			qp += "neos=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
+		case "SB":
+			qp += "sbdb=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Kind":
 			qp += "kind=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Spk":

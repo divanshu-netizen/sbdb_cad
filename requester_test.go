@@ -1,4 +1,4 @@
-package neos
+package sbdb
 
 import (
 	"net/http"

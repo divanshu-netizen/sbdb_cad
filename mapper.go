@@ -1,4 +1,4 @@
-package neos
+package sbdb
 
 import (
 	"encoding/json"
@@ -21,9 +21,9 @@ type Decoder interface {
 	Decode(input interface{}, output interface{}) error
 }
 
-type NeoDecoder struct{}
+type SBDecoder struct{}
 
-func (nd *NeoDecoder) Decode(input interface{}, output interface{}) error {
+func (sd *SBDecoder) Decode(input interface{}, output interface{}) error {
 	err := mapstructure.Decode(input, output)
 	if err != nil {
 		return err
@@ -33,20 +33,20 @@ func (nd *NeoDecoder) Decode(input interface{}, output interface{}) error {
 }
 
 type Mapper interface {
-	Map(response *http.Response) ([]Neo, error)
+	Map(response *http.Response) ([]SB, error)
 }
 
-type NeoMapper struct {
+type SBMapper struct {
 	Decoder
 }
 
-func NewNeoMapper() *NeoMapper {
-	return &NeoMapper{
-		Decoder: new(NeoDecoder),
+func NewSBMapper() *SBMapper {
+	return &SBMapper{
+		Decoder: new(SBDecoder),
 	}
 }
 
-func (nm *NeoMapper) Map(res *http.Response) ([]Neo, error) {
+func (sb *SBMapper) Map(res *http.Response) ([]SB, error) {
 	neoRes := new(NeoResponse)
 
 	err := json.NewDecoder(res.Body).Decode(neoRes)
@@ -58,14 +58,14 @@ func (nm *NeoMapper) Map(res *http.Response) ([]Neo, error) {
 		return nil, errors.New("no results were found for this search")
 	}
 
-	return nm.mapNeoResToNeo(neoRes)
+	return sb.mapNeoResToNeo(neoRes)
 }
 
-func (nm *NeoMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]Neo, error) {
-	var neos []Neo
+func (sb *SBMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]SB, error) {
+	var neos []SB
 
 	for _, res := range neoRes.Data {
-		n, err := nm.mapNeoResArrayToStruct(res, neoRes.Fields)
+		n, err := sb.mapNeoResArrayToStruct(res, neoRes.Fields)
 		if err != nil {
 			return nil, err
 		}
@@ -76,13 +76,13 @@ func (nm *NeoMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]Neo, error) {
 	return neos, nil
 }
 
-func (nm *NeoMapper) mapNeoResArrayToStruct(res []string, fields []string) (*Neo, error) {
+func (sb *SBMapper) mapNeoResArrayToStruct(res []string, fields []string) (*SB, error) {
 	mappedNeo := make(map[string]string)
 	for i, field := range res {
 		mappedNeo[fields[i]] = field
 	}
 
-	result := &Neo{}
+	result := &SB{}
 	err := mapstructure.Decode(mappedNeo, result)
 	if err != nil {
 		return nil, err

@@ -1,4 +1,4 @@
-package neos
+package sbdb
 
 import (
 	"errors"
@@ -13,32 +13,32 @@ func TestFindNeoBy(t *testing.T) {
 	tests := []struct {
 		baseUrl         string
 		name            string
-		args            NeoQueryOptions
+		args            SmallBodyOptions
 		getterData      *http.Response
 		getterErr       error
-		mapperData      []Neo
+		mapperData      []SB
 		mapperErr       error
 		QueryStringData string
-		want            []Neo
+		want            []SB
 		wantErr         bool
 		err             error
 	}{
 		{
 			baseUrl:         baseUrl,
 			name:            "Neos returned, no error occurs",
-			args:            NeoQueryOptions{},
+			args:            SmallBodyOptions{},
 			getterData:      new(http.Response),
 			getterErr:       nil,
-			mapperData:      []Neo{Neo{}, Neo{}},
+			mapperData:      []SB{SB{}, SB{}},
 			mapperErr:       nil,
 			QueryStringData: "test query string data",
-			want:            []Neo{Neo{}, Neo{}},
+			want:            []SB{SB{}, SB{}},
 			wantErr:         false,
 			err:             nil,
 		}, {
 			baseUrl:         baseUrl,
 			name:            "Neos not returned, error occurs in getter",
-			args:            NeoQueryOptions{},
+			args:            SmallBodyOptions{},
 			getterData:      nil,
 			getterErr:       errors.New("mapper encountered an error"),
 			mapperData:      nil,
@@ -50,7 +50,7 @@ func TestFindNeoBy(t *testing.T) {
 		}, {
 			baseUrl:         baseUrl,
 			name:            "Neos not returned, error occurs in mapper",
-			args:            NeoQueryOptions{},
+			args:            SmallBodyOptions{},
 			getterData:      new(http.Response),
 			getterErr:       nil,
 			mapperData:      nil,
@@ -63,19 +63,19 @@ func TestFindNeoBy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ns := &neoService{
+			ns := &sbService{
 				BaseUrl:            tt.baseUrl,
 				Getter:             &MockGetter{tt.getterData, tt.getterErr},
 				Mapper:             &MockMapper{tt.mapperData, tt.mapperErr},
 				QueryStringBuilder: &MockQueryStringBuilder{tt.QueryStringData},
 			}
-			got, err := ns.FindNeoBy(tt.args)
+			got, err := ns.FindSBBy(tt.args)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("FindNeoBy() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FindSBBy() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindNeoBy() got = %v, want %v", got, tt.want)
+				t.Errorf("FindSBBy() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -91,11 +91,11 @@ func (mg *MockGetter) Get(url string) (resp *http.Response, err error) {
 }
 
 type MockMapper struct {
-	data []Neo
+	data []SB
 	err  error
 }
 
-func (mm *MockMapper) Map(response *http.Response) ([]Neo, error) {
+func (mm *MockMapper) Map(response *http.Response) ([]SB, error) {
 	return mm.data, mm.err
 }
 
@@ -103,6 +103,6 @@ type MockQueryStringBuilder struct {
 	data string
 }
 
-func (mqs *MockQueryStringBuilder) Build(nqo *NeoQueryOptions) string {
+func (mqs *MockQueryStringBuilder) Build(nqo *SmallBodyOptions) string {
 	return mqs.data
 }

@@ -1,6 +1,6 @@
-package neos
+package sbdb
 
-type Neo struct {
+type SB struct {
 	Des       string `json:"destination"`
 	Orbit_id  string `json:"orbitId"`
 	Jd        string `json:"closeApproachJd"`
@@ -16,7 +16,7 @@ type Neo struct {
 	FullName  string `json:"fullName"`
 }
 
-type NeoQueryOptions struct {
+type SmallBodyOptions struct {
 	DateMin             string `json:"dateMin"`
 	DateMax             string `json:"dateMax"`
 	DistanceMin         string `json:"distanceMin"`
@@ -32,7 +32,7 @@ type NeoQueryOptions struct {
 	Nea                 bool   `json:"nea"`
 	Comet               bool   `json:"comet"`
 	NeaComet            bool   `json:"neaComet"`
-	Neo                 bool   `json:"neos"`
+	Neo                 bool   `json:"sbdb"`
 	Kind                string `json:"kind"`
 	Spk                 string `json:"spk"`
 	Designation         string `json:"designation"`
@@ -42,31 +42,31 @@ type NeoQueryOptions struct {
 	FullName            bool   `json:"fullName"`
 }
 
-type NeoFinder interface {
-	FindNeoBy(nqo NeoQueryOptions) ([]Neo, error)
+type SbFinder interface {
+	FindSBBy(sbo SmallBodyOptions) ([]SB, error)
 }
 
-type neoService struct {
+type sbService struct {
 	BaseUrl string
 	Getter
 	Mapper
 	QueryStringBuilder
 }
 
-func NewNeoService() *neoService {
-	return &neoService{
+func NewSBService() *sbService {
+	return &sbService{
 		BaseUrl:            "https://ssd-api.jpl.nasa.gov/cad.api?",
 		Getter:             new(Requester),
-		Mapper:             NewNeoMapper(),
+		Mapper:             NewSBMapper(),
 		QueryStringBuilder: NewQueryBuilder(),
 	}
 }
 
-func (ns *neoService) FindNeoBy(nqo NeoQueryOptions) ([]Neo, error) {
-	res, err := ns.Getter.Get(ns.BaseUrl + ns.QueryStringBuilder.Build(&nqo))
+func (ss *sbService) FindSBBy(sbo SmallBodyOptions) ([]SB, error) {
+	res, err := ss.Getter.Get(ss.BaseUrl + ss.QueryStringBuilder.Build(&sbo))
 	if err != nil {
 		return nil, err
 	}
 
-	return ns.Mapper.Map(res)
+	return ss.Mapper.Map(res)
 }
