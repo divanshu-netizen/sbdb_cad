@@ -125,6 +125,7 @@ if err != nil {
 }
 
 return bodies
+}
 ```
 
 ## Contributing
