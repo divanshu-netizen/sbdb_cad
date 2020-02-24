@@ -117,6 +117,7 @@ type SmallBodyOptions struct {
 imports(
     sbdb "github.com/evancaplab/sbdb"
 )
+
 func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error){
 sbService := sbdb.NewSBService()
 bodies, err := sbService.FindSBBy(sbo)
