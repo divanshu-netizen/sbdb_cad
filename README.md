@@ -124,7 +124,7 @@ sbo := sbdb.SmallBodyOptions{
 }
 bodies, err := sbService.FindSBBy(sbo)
 if err != nil {
-    handler error
+    handle error
 }
 ```
 
