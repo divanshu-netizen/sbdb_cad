@@ -117,15 +117,14 @@ type SmallBodyOptions struct {
 imports(
     sbdb "github.com/evancaplab/sbdb"
 )
-
+func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error){
 sbService := sbdb.NewSBService()
-sbo := sbdb.SmallBodyOptions{
-    // insert fields here
-}
 bodies, err := sbService.FindSBBy(sbo)
 if err != nil {
-    handle error
+    return err, nil
 }
+
+return bodies
 ```
 
 ## Contributing
