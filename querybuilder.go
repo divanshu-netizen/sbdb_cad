@@ -2,45 +2,22 @@ package sbdb
 
 import (
 	"fmt"
-	"github.com/google/go-querystring/query"
-	"net/url"
 	"reflect"
 	"strings"
 )
 
-type Options struct {
-	Query   string `url:"q"`
-	ShowAll bool   `url:"all"`
-	Page    int    `url:"page"`
-}
-
-type OptionValueConverter interface {
-	Values(v interface{}) (url.Values, error)
-}
-
-type OVC struct {
-}
-
-func (b *OVC) Values(v interface{}) (url.Values, error) {
-	return query.Values(v)
-}
-
 type QueryStringBuilder interface {
-	Build(nqo *SmallBodyOptions) string
+	Build(sbo *SmallBodyOptions) string
 }
 
-type queryBuilder struct {
-	OptionValueConverter
-}
+type queryBuilder struct{}
 
 func NewQueryBuilder() *queryBuilder {
-	return &queryBuilder{
-		OptionValueConverter: new(OVC),
-	}
+	return &queryBuilder{}
 }
 
-func (qb *queryBuilder) Build(nqo *SmallBodyOptions) string {
-	fields := reflect.Indirect(reflect.ValueOf(nqo))
+func (qb *queryBuilder) Build(sbo *SmallBodyOptions) string {
+	fields := reflect.Indirect(reflect.ValueOf(sbo))
 	var qp string
 	for field := 0; field < fields.Type().NumField(); field++ {
 		fieldName := fields.Type().Field(field).Name
@@ -70,6 +47,8 @@ func (qb *queryBuilder) Build(nqo *SmallBodyOptions) string {
 			qp += "vel-rel-min=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "VelocityRelativeMax":
 			qp += "vel-rel-max=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
+		case "Class":
+			qp += "class=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Pha":
 			qp += "pha=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Nea":
@@ -78,6 +57,8 @@ func (qb *queryBuilder) Build(nqo *SmallBodyOptions) string {
 			qp += "comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "NeaComet":
 			qp += "nea-comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
+		case "Neo":
+			qp += "neo=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "SB":
 			qp += "sbdb=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Kind":
@@ -90,13 +71,12 @@ func (qb *queryBuilder) Build(nqo *SmallBodyOptions) string {
 			qp += "body=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Sort":
 			qp += "sort=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
-		case "limit":
+		case "Limit":
 			qp += "limit=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "FullName":
 			qp += "fullname=" + fmt.Sprintf("%v", fields.Field(field).Interface())
 		}
 	}
-
 
 	return strings.TrimSuffix(qp, "&")
 }

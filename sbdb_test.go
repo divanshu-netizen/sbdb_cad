@@ -9,7 +9,7 @@ import (
 
 const baseUrl = "baseUrl"
 
-func TestFindNeoBy(t *testing.T) {
+func TestFindSBBy(t *testing.T) {
 	tests := []struct {
 		baseUrl         string
 		name            string
@@ -25,7 +25,7 @@ func TestFindNeoBy(t *testing.T) {
 	}{
 		{
 			baseUrl:         baseUrl,
-			name:            "Neos returned, no error occurs",
+			name:            "SBs returned, no error occurs",
 			args:            SmallBodyOptions{},
 			getterData:      new(http.Response),
 			getterErr:       nil,
@@ -37,7 +37,7 @@ func TestFindNeoBy(t *testing.T) {
 			err:             nil,
 		}, {
 			baseUrl:         baseUrl,
-			name:            "Neos not returned, error occurs in getter",
+			name:            "SBs not returned, error occurs in getter",
 			args:            SmallBodyOptions{},
 			getterData:      nil,
 			getterErr:       errors.New("mapper encountered an error"),
@@ -103,6 +103,6 @@ type MockQueryStringBuilder struct {
 	data string
 }
 
-func (mqs *MockQueryStringBuilder) Build(nqo *SmallBodyOptions) string {
+func (mqs *MockQueryStringBuilder) Build(sbo *SmallBodyOptions) string {
 	return mqs.data
 }

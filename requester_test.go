@@ -1,33 +1,48 @@
 package sbdb
 
 import (
+	"fmt"
+	"io/ioutil"
 	"net/http"
-	"reflect"
+	"net/http/httptest"
 	"testing"
 )
 
 func TestRequester_Get(t *testing.T) {
-	type args struct {
-		url string
-	}
 	tests := []struct {
-		name     string
-		args     args
-		wantResp *http.Response
-		wantErr  bool
+		name        string
+		server      httptest.Server
+		wantResp    string
+		wantErr     bool
+		expectedErr error
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Return http.Response with no error",
+			server: *httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				fmt.Fprint(w, "test")
+			})),
+			wantResp: "test",
+			wantErr:  false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+
 			r := &Requester{}
-			gotResp, err := r.Get(tt.args.url)
+
+			gotResp, err := r.Get(tt.server.URL)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Get() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Get() error = %v, wantErr %v", err, tt.expectedErr)
 				return
 			}
-			if !reflect.DeepEqual(gotResp, tt.wantResp) {
-				t.Errorf("Get() gotResp = %v, want %v", gotResp, tt.wantResp)
+			gotRespString, err := ioutil.ReadAll(gotResp.Body)
+			gotResp.Body.Close()
+			if err != nil {
+				t.Errorf("Something went wrong in the test server")
+
+			}
+			if string(gotRespString) != tt.wantResp {
+				t.Errorf("Get() gotResp = %v, want %v", string(gotRespString), tt.wantResp)
 			}
 		})
 	}

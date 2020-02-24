@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type NeoResponse struct {
+type SBResponse struct {
 	Signature struct {
 		Version string `json:"version"`
 		Source  string `json:"source"`
@@ -47,43 +47,43 @@ func NewSBMapper() *SBMapper {
 }
 
 func (sb *SBMapper) Map(res *http.Response) ([]SB, error) {
-	neoRes := new(NeoResponse)
+	sbRes := new(SBResponse)
 
-	err := json.NewDecoder(res.Body).Decode(neoRes)
+	err := json.NewDecoder(res.Body).Decode(sbRes)
 	if err != nil {
 		return nil, err
 	}
 
-	if neoRes.Count == "0" {
+	if sbRes.Count == "0" {
 		return nil, errors.New("no results were found for this search")
 	}
 
-	return sb.mapNeoResToNeo(neoRes)
+	return sb.mapSBResToSB(sbRes)
 }
 
-func (sb *SBMapper) mapNeoResToNeo(neoRes *NeoResponse) ([]SB, error) {
-	var neos []SB
+func (sb *SBMapper) mapSBResToSB(sbRes *SBResponse) ([]SB, error) {
+	var sbs []SB
 
-	for _, res := range neoRes.Data {
-		n, err := sb.mapNeoResArrayToStruct(res, neoRes.Fields)
+	for _, res := range sbRes.Data {
+		s, err := sb.mapSBResArrayToStruct(res, sbRes.Fields)
 		if err != nil {
 			return nil, err
 		}
 
-		neos = append(neos, *n)
+		sbs = append(sbs, *s)
 	}
 
-	return neos, nil
+	return sbs, nil
 }
 
-func (sb *SBMapper) mapNeoResArrayToStruct(res []string, fields []string) (*SB, error) {
-	mappedNeo := make(map[string]string)
+func (sb *SBMapper) mapSBResArrayToStruct(res []string, fields []string) (*SB, error) {
+	mappedSB := make(map[string]string)
 	for i, field := range res {
-		mappedNeo[fields[i]] = field
+		mappedSB[fields[i]] = field
 	}
 
 	result := &SB{}
-	err := mapstructure.Decode(mappedNeo, result)
+	err := sb.Decoder.Decode(mappedSB, result)
 	if err != nil {
 		return nil, err
 	}

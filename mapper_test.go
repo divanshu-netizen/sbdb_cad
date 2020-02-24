@@ -1,12 +1,16 @@
 package sbdb
 
 import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"io/ioutil"
 	"net/http"
 	"reflect"
 	"testing"
 )
 
-func TestNeoDecoder_Decode(t *testing.T) {
+func TestSBDecoder_Decode(t *testing.T) {
 	type args struct {
 		input  interface{}
 		output interface{}
@@ -16,40 +20,82 @@ func TestNeoDecoder_Decode(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "Error occurs in mapstructure.Decode",
+			args: args{
+				input:  make(map[string]string),
+				output: SB{},
+			},
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nd := &SBDecoder{}
-			if err := nd.Decode(tt.args.input, tt.args.output); (err != nil) != tt.wantErr {
+			sd := &SBDecoder{}
+			if err := sd.Decode(tt.args.input, tt.args.output); (err != nil) != tt.wantErr {
 				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestNeoMapper_Map(t *testing.T) {
-	type fields struct {
-		Decoder Decoder
-	}
-	type args struct {
-		res *http.Response
-	}
+func TestSBMapper_Map(t *testing.T) {
 	tests := []struct {
 		name    string
-		fields  fields
-		args    args
+		decoder Decoder
+		args    *http.Response
+		sbr     SBResponse
 		want    []SB
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "Returns Array of SBs with no error",
+			decoder: &MockDecoder{err: nil},
+			args:    &http.Response{},
+			sbr: SBResponse{
+				Count:  "1",
+				Fields: []string{},
+				Data:   [][]string{{}},
+			},
+			want:    []SB{{}},
+			wantErr: false,
+		}, {
+			name:    "Zero count error occurs",
+			decoder: &MockDecoder{err: nil},
+			args:    &http.Response{},
+			sbr: SBResponse{
+				Count:  "0",
+				Fields: []string{},
+				Data:   [][]string{{}},
+			},
+			want:    nil,
+			wantErr: true,
+		}, {
+			name:    "Error Occurs in decoder",
+			decoder: &MockDecoder{err: errors.New("error in decoder")},
+			args:    &http.Response{},
+			sbr: SBResponse{
+				Count:  "1",
+				Fields: []string{},
+				Data:   [][]string{{}},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nm := &SBMapper{
-				Decoder: tt.fields.Decoder,
+			sb := &SBMapper{
+				Decoder: tt.decoder,
 			}
-			got, err := nm.Map(tt.args.res)
+
+			respBytes, err := json.Marshal(tt.sbr)
+			if err != nil {
+				t.Errorf("Error marshalling response bytes")
+			}
+			tt.args.Body = ioutil.NopCloser(bytes.NewBuffer(respBytes))
+
+			got, err := sb.Map(tt.args)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("Map() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -61,62 +107,92 @@ func TestNeoMapper_Map(t *testing.T) {
 	}
 }
 
-func TestNeoMapper_mapNeoResArrayToStruct(t *testing.T) {
-	type fields struct {
-		Decoder Decoder
-	}
+func TestSBMapper_mapSBResArrayToStruct(t *testing.T) {
 	type args struct {
 		res    []string
 		fields []string
 	}
 	tests := []struct {
 		name    string
-		fields  fields
+		decoder Decoder
 		args    args
 		want    *SB
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "SB Response Array mapped to Struct, no error",
+			decoder: &MockDecoder{err: nil},
+			args: args{
+				res:    []string{},
+				fields: []string{},
+			},
+			want: &SB{},
+		}, {
+			name:    "Error occurs in decoder",
+			decoder: &MockDecoder{err: errors.New("error occurred in decoder")},
+			args: args{
+				res:    []string{},
+				fields: []string{},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nm := &SBMapper{
-				Decoder: tt.fields.Decoder,
+			sb := &SBMapper{
+				Decoder: tt.decoder,
 			}
-			got, err := nm.mapNeoResArrayToStruct(tt.args.res, tt.args.fields)
+			got, err := sb.mapSBResArrayToStruct(tt.args.res, tt.args.fields)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("mapNeoResArrayToStruct() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("mapSBResArrayToStruct() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("mapNeoResArrayToStruct() got = %v, want %v", got, tt.want)
+				t.Errorf("mapSBResArrayToStruct() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
 }
 
-func TestNeoMapper_mapNeoResToNeo(t *testing.T) {
-	type fields struct {
-		Decoder Decoder
-	}
-	type args struct {
-		neoRes *NeoResponse
-	}
+func TestSBMapper_mapSBResToSB(t *testing.T) {
 	tests := []struct {
-		name    string
-		fields  fields
-		args    args
-		want    []SB
-		wantErr bool
+		name       string
+		decoder    Decoder
+		sbResponse *SBResponse
+		want       []SB
+		wantErr    bool
 	}{
-		// TODO: Add test cases.
+		{
+			name:    "Return SB, no error occurs",
+			decoder: &MockDecoder{err: nil},
+			sbResponse: &SBResponse{
+				Count:  "1",
+				Fields: []string{},
+				Data:   [][]string{{}},
+			},
+			want:    []SB{{}},
+			wantErr: false,
+		},
+		{
+			name:
+			"Error occurs in decoder",
+			decoder: &MockDecoder{err: errors.New("error decoding")},
+			sbResponse: &SBResponse{
+				Count:  "0",
+				Fields: []string{},
+				Data:   [][]string{{}},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			nm := &SBMapper{
-				Decoder: tt.fields.Decoder,
+			sb := &SBMapper{
+				Decoder: tt.decoder,
 			}
-			got, err := nm.mapNeoResToNeo(tt.args.neoRes)
+			got, err := sb.mapSBResToSB(tt.sbResponse)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("mapNeoResToNeo() error = %v, wantErr %v", err, tt.wantErr)
 				return
@@ -128,18 +204,10 @@ func TestNeoMapper_mapNeoResToNeo(t *testing.T) {
 	}
 }
 
-func TestNewNeoMapper(t *testing.T) {
-	tests := []struct {
-		name string
-		want *SBMapper
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := NewSBMapper(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("NewSBMapper() = %v, want %v", got, tt.want)
-			}
-		})
-	}
+type MockDecoder struct {
+	err error
+}
+
+func (md *MockDecoder) Decode(input interface{}, output interface{}) error {
+	return md.err
 }

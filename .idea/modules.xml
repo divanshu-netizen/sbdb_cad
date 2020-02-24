@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../neos/.idea/sbdb.iml" filepath="$PROJECT_DIR$/../neos/.idea/sbdb.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../sbdb/.idea/sbdb.iml" filepath="$PROJECT_DIR$/../sbdb/.idea/sbdb.iml" />
     </modules>
   </component>
 </project>
