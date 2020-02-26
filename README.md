@@ -118,14 +118,13 @@ imports(
     sbdb "github.com/evancaplab/sbdb"
 )
 
-func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error){
-sbService := sbdb.NewSBService()
-bodies, err := sbService.FindSBBy(sbo)
-if err != nil {
-    return err, nil
-}
-
-return bodies
+func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error) {
+	sbService := sbdb.NewSBService()
+	bodies, err := sbService.FindSBBy(sbo)
+	if err != nil {
+    		return err, nil
+	}
+	return bodies
 }
 ```
 
