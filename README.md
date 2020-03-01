@@ -5,7 +5,7 @@ A Go Client for Nasa's Small Body Database Close-Approach API
 ## Installation
 
 ```bash
-go get github.com/evancaplan/sbdb
+go get github.com/evancaplan/sbdb_cad
 ```
 
 ## Search Options
