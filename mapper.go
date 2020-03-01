@@ -58,6 +58,10 @@ func (sb *SbCADMapper) Map(res *http.Response) ([]SbCAD, error) {
 		return nil, errors.New("no results were found for this search")
 	}
 
+	if sbRes.Signature.Version != "1.1" {
+		return nil, errors.New("api version has been updated. please contact maintainer of this library")
+	}
+
 	return sb.mapSBCADResToSBCAD(sbRes)
 }
 
