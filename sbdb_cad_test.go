@@ -63,19 +63,19 @@ func TestFindSBBy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ns := &sbService{
+			ns := &sbCADService{
 				BaseUrl:            tt.baseUrl,
 				Getter:             &MockGetter{tt.getterData, tt.getterErr},
 				Mapper:             &MockMapper{tt.mapperData, tt.mapperErr},
 				QueryStringBuilder: &MockQueryStringBuilder{tt.QueryStringData},
 			}
-			got, err := ns.FindSBBy(tt.args)
+			got, err := ns.FindSBCADBy(tt.args)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("FindSBBy() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FindSBCADBy() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindSBBy() got = %v, want %v", got, tt.want)
+				t.Errorf("FindSBCADBy() got = %v, want %v", got, tt.want)
 			}
 		})
 	}

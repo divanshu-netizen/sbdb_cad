@@ -31,7 +31,7 @@ func TestSBDecoder_Decode(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sd := &SBDecoder{}
+			sd := &SbCADDecoder{}
 			if err := sd.Decode(tt.args.input, tt.args.output); (err != nil) != tt.wantErr {
 				t.Errorf("Decode() error = %v, wantErr %v", err, tt.wantErr)
 			}
@@ -44,7 +44,7 @@ func TestSBMapper_Map(t *testing.T) {
 		name    string
 		decoder Decoder
 		args    *http.Response
-		sbr     SBResponse
+		sbr     SbCADResponse
 		want    []SB
 		wantErr bool
 	}{
@@ -52,7 +52,7 @@ func TestSBMapper_Map(t *testing.T) {
 			name:    "Returns Array of SBs with no error",
 			decoder: &MockDecoder{err: nil},
 			args:    &http.Response{},
-			sbr: SBResponse{
+			sbr: SbCADResponse{
 				Count:  "1",
 				Fields: []string{},
 				Data:   [][]string{{}},
@@ -63,7 +63,7 @@ func TestSBMapper_Map(t *testing.T) {
 			name:    "Zero count error occurs",
 			decoder: &MockDecoder{err: nil},
 			args:    &http.Response{},
-			sbr: SBResponse{
+			sbr: SbCADResponse{
 				Count:  "0",
 				Fields: []string{},
 				Data:   [][]string{{}},
@@ -74,7 +74,7 @@ func TestSBMapper_Map(t *testing.T) {
 			name:    "Error Occurs in decoder",
 			decoder: &MockDecoder{err: errors.New("error in decoder")},
 			args:    &http.Response{},
-			sbr: SBResponse{
+			sbr: SbCADResponse{
 				Count:  "1",
 				Fields: []string{},
 				Data:   [][]string{{}},
@@ -85,7 +85,7 @@ func TestSBMapper_Map(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sb := &SBMapper{
+			sb := &SbCADMapper{
 				Decoder: tt.decoder,
 			}
 
@@ -140,16 +140,16 @@ func TestSBMapper_mapSBResArrayToStruct(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sb := &SBMapper{
+			sb := &SbCADMapper{
 				Decoder: tt.decoder,
 			}
-			got, err := sb.mapSBResArrayToStruct(tt.args.res, tt.args.fields)
+			got, err := sb.mapSbCADResArrayToStruct(tt.args.res, tt.args.fields)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("mapSBResArrayToStruct() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("mapSbCADResArrayToStruct() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("mapSBResArrayToStruct() got = %v, want %v", got, tt.want)
+				t.Errorf("mapSbCADResArrayToStruct() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -159,14 +159,14 @@ func TestSBMapper_mapSBResToSB(t *testing.T) {
 	tests := []struct {
 		name       string
 		decoder    Decoder
-		sbResponse *SBResponse
+		sbResponse *SbCADResponse
 		want       []SB
 		wantErr    bool
 	}{
 		{
 			name:    "Return SB, no error occurs",
 			decoder: &MockDecoder{err: nil},
-			sbResponse: &SBResponse{
+			sbResponse: &SbCADResponse{
 				Count:  "1",
 				Fields: []string{},
 				Data:   [][]string{{}},
@@ -178,7 +178,7 @@ func TestSBMapper_mapSBResToSB(t *testing.T) {
 			name:
 			"Error occurs in decoder",
 			decoder: &MockDecoder{err: errors.New("error decoding")},
-			sbResponse: &SBResponse{
+			sbResponse: &SbCADResponse{
 				Count:  "0",
 				Fields: []string{},
 				Data:   [][]string{{}},
@@ -189,10 +189,10 @@ func TestSBMapper_mapSBResToSB(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			sb := &SBMapper{
+			sb := &SbCADMapper{
 				Decoder: tt.decoder,
 			}
-			got, err := sb.mapSBResToSB(tt.sbResponse)
+			got, err := sb.mapSBCADResToSBCAD(tt.sbResponse)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("mapNeoResToNeo() error = %v, wantErr %v", err, tt.wantErr)
 				return

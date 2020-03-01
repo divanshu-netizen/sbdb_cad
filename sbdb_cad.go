@@ -42,27 +42,27 @@ type SmallBodyOptions struct {
 	FullName            bool   `json:"fullName"`
 }
 
-type SbFinder interface {
-	FindSBBy(sbo SmallBodyOptions) ([]SB, error)
+type SbCADFinder interface {
+	FindSBCADBy(sbo SmallBodyOptions) ([]SB, error)
 }
 
-type sbService struct {
+type sbCADService struct {
 	BaseUrl string
 	Getter
 	Mapper
 	QueryStringBuilder
 }
 
-func NewSBService() *sbService {
-	return &sbService{
+func NewSBCADService() *sbCADService {
+	return &sbCADService{
 		BaseUrl:            "https://ssd-api.jpl.nasa.gov/cad.api?",
 		Getter:             new(Requester),
-		Mapper:             NewSBMapper(),
+		Mapper:             NewSbCADMapper(),
 		QueryStringBuilder: NewQueryBuilder(),
 	}
 }
 
-func (ss *sbService) FindSBBy(sbo SmallBodyOptions) ([]SB, error) {
+func (ss *sbCADService) FindSBCADBy(sbo SmallBodyOptions) ([]SB, error) {
 	res, err := ss.Getter.Get(ss.BaseUrl + ss.QueryStringBuilder.Build(&sbo))
 	if err != nil {
 		return nil, err

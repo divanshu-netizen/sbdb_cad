@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-type SBResponse struct {
+type SbCADResponse struct {
 	Signature struct {
 		Version string `json:"version"`
 		Source  string `json:"source"`
@@ -21,9 +21,9 @@ type Decoder interface {
 	Decode(input interface{}, output interface{}) error
 }
 
-type SBDecoder struct{}
+type SbCADDecoder struct{}
 
-func (sd *SBDecoder) Decode(input interface{}, output interface{}) error {
+func (sd *SbCADDecoder) Decode(input interface{}, output interface{}) error {
 	err := mapstructure.Decode(input, output)
 	if err != nil {
 		return err
@@ -36,18 +36,18 @@ type Mapper interface {
 	Map(response *http.Response) ([]SB, error)
 }
 
-type SBMapper struct {
+type SbCADMapper struct {
 	Decoder
 }
 
-func NewSBMapper() *SBMapper {
-	return &SBMapper{
-		Decoder: new(SBDecoder),
+func NewSbCADMapper() *SbCADMapper {
+	return &SbCADMapper{
+		Decoder: new(SbCADDecoder),
 	}
 }
 
-func (sb *SBMapper) Map(res *http.Response) ([]SB, error) {
-	sbRes := new(SBResponse)
+func (sb *SbCADMapper) Map(res *http.Response) ([]SB, error) {
+	sbRes := new(SbCADResponse)
 
 	err := json.NewDecoder(res.Body).Decode(sbRes)
 	if err != nil {
@@ -58,14 +58,14 @@ func (sb *SBMapper) Map(res *http.Response) ([]SB, error) {
 		return nil, errors.New("no results were found for this search")
 	}
 
-	return sb.mapSBResToSB(sbRes)
+	return sb.mapSBCADResToSBCAD(sbRes)
 }
 
-func (sb *SBMapper) mapSBResToSB(sbRes *SBResponse) ([]SB, error) {
+func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SB, error) {
 	var sbs []SB
 
 	for _, res := range sbRes.Data {
-		s, err := sb.mapSBResArrayToStruct(res, sbRes.Fields)
+		s, err := sb.mapSbCADResArrayToStruct(res, sbRes.Fields)
 		if err != nil {
 			return nil, err
 		}
@@ -76,7 +76,7 @@ func (sb *SBMapper) mapSBResToSB(sbRes *SBResponse) ([]SB, error) {
 	return sbs, nil
 }
 
-func (sb *SBMapper) mapSBResArrayToStruct(res []string, fields []string) (*SB, error) {
+func (sb *SbCADMapper) mapSbCADResArrayToStruct(res []string, fields []string) (*SB, error) {
 	mappedSB := make(map[string]string)
 	for i, field := range res {
 		mappedSB[fields[i]] = field
