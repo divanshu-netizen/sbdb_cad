@@ -24,7 +24,7 @@ func TestSBDecoder_Decode(t *testing.T) {
 			name: "Error occurs in mapstructure.Decode",
 			args: args{
 				input:  make(map[string]string),
-				output: SB{},
+				output: SbCAD{},
 			},
 			wantErr: true,
 		},
@@ -45,7 +45,7 @@ func TestSBMapper_Map(t *testing.T) {
 		decoder Decoder
 		args    *http.Response
 		sbr     SbCADResponse
-		want    []SB
+		want    []SbCAD
 		wantErr bool
 	}{
 		{
@@ -57,7 +57,7 @@ func TestSBMapper_Map(t *testing.T) {
 				Fields: []string{},
 				Data:   [][]string{{}},
 			},
-			want:    []SB{{}},
+			want:    []SbCAD{{}},
 			wantErr: false,
 		}, {
 			name:    "Zero count error occurs",
@@ -116,17 +116,17 @@ func TestSBMapper_mapSBResArrayToStruct(t *testing.T) {
 		name    string
 		decoder Decoder
 		args    args
-		want    *SB
+		want    *SbCAD
 		wantErr bool
 	}{
 		{
-			name:    "SB Response Array mapped to Struct, no error",
+			name:    "SbCAD Response Array mapped to Struct, no error",
 			decoder: &MockDecoder{err: nil},
 			args: args{
 				res:    []string{},
 				fields: []string{},
 			},
-			want: &SB{},
+			want: &SbCAD{},
 		}, {
 			name:    "Error occurs in decoder",
 			decoder: &MockDecoder{err: errors.New("error occurred in decoder")},
@@ -160,18 +160,18 @@ func TestSBMapper_mapSBResToSB(t *testing.T) {
 		name       string
 		decoder    Decoder
 		sbResponse *SbCADResponse
-		want       []SB
+		want       []SbCAD
 		wantErr    bool
 	}{
 		{
-			name:    "Return SB, no error occurs",
+			name:    "Return SbCAD, no error occurs",
 			decoder: &MockDecoder{err: nil},
 			sbResponse: &SbCADResponse{
 				Count:  "1",
 				Fields: []string{},
 				Data:   [][]string{{}},
 			},
-			want:    []SB{{}},
+			want:    []SbCAD{{}},
 			wantErr: false,
 		},
 		{

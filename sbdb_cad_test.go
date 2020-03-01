@@ -16,10 +16,10 @@ func TestFindSBBy(t *testing.T) {
 		args            SmallBodyOptions
 		getterData      *http.Response
 		getterErr       error
-		mapperData      []SB
+		mapperData      []SbCAD
 		mapperErr       error
 		QueryStringData string
-		want            []SB
+		want            []SbCAD
 		wantErr         bool
 		err             error
 	}{
@@ -29,10 +29,10 @@ func TestFindSBBy(t *testing.T) {
 			args:            SmallBodyOptions{},
 			getterData:      new(http.Response),
 			getterErr:       nil,
-			mapperData:      []SB{SB{}, SB{}},
+			mapperData:      []SbCAD{SbCAD{}, SbCAD{}},
 			mapperErr:       nil,
 			QueryStringData: "test query string data",
-			want:            []SB{SB{}, SB{}},
+			want:            []SbCAD{SbCAD{}, SbCAD{}},
 			wantErr:         false,
 			err:             nil,
 		}, {
@@ -91,11 +91,11 @@ func (mg *MockGetter) Get(url string) (resp *http.Response, err error) {
 }
 
 type MockMapper struct {
-	data []SB
+	data []SbCAD
 	err  error
 }
 
-func (mm *MockMapper) Map(response *http.Response) ([]SB, error) {
+func (mm *MockMapper) Map(response *http.Response) ([]SbCAD, error) {
 	return mm.data, mm.err
 }
 

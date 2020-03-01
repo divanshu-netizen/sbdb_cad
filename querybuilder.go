@@ -59,7 +59,7 @@ func (qb *queryBuilder) Build(sbo *SmallBodyOptions) string {
 			qp += "nea-comet=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Neo":
 			qp += "neo=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
-		case "SB":
+		case "SbCAD":
 			qp += "sbdb=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"
 		case "Kind":
 			qp += "kind=" + fmt.Sprintf("%v", fields.Field(field).Interface()) + "&"

@@ -1,6 +1,6 @@
 package sbdb_cad
 
-type SB struct {
+type SbCAD struct {
 	Des       string `json:"destination"`
 	Orbit_id  string `json:"orbitId"`
 	Jd        string `json:"closeApproachJd"`
@@ -43,7 +43,7 @@ type SmallBodyOptions struct {
 }
 
 type SbCADFinder interface {
-	FindSBCADBy(sbo SmallBodyOptions) ([]SB, error)
+	FindSBCADBy(sbo SmallBodyOptions) ([]SbCAD, error)
 }
 
 type sbCADService struct {
@@ -62,7 +62,7 @@ func NewSBCADService() *sbCADService {
 	}
 }
 
-func (ss *sbCADService) FindSBCADBy(sbo SmallBodyOptions) ([]SB, error) {
+func (ss *sbCADService) FindSBCADBy(sbo SmallBodyOptions) ([]SbCAD, error) {
 	res, err := ss.Getter.Get(ss.BaseUrl + ss.QueryStringBuilder.Build(&sbo))
 	if err != nil {
 		return nil, err

@@ -33,7 +33,7 @@ func (sd *SbCADDecoder) Decode(input interface{}, output interface{}) error {
 }
 
 type Mapper interface {
-	Map(response *http.Response) ([]SB, error)
+	Map(response *http.Response) ([]SbCAD, error)
 }
 
 type SbCADMapper struct {
@@ -46,7 +46,7 @@ func NewSbCADMapper() *SbCADMapper {
 	}
 }
 
-func (sb *SbCADMapper) Map(res *http.Response) ([]SB, error) {
+func (sb *SbCADMapper) Map(res *http.Response) ([]SbCAD, error) {
 	sbRes := new(SbCADResponse)
 
 	err := json.NewDecoder(res.Body).Decode(sbRes)
@@ -61,8 +61,8 @@ func (sb *SbCADMapper) Map(res *http.Response) ([]SB, error) {
 	return sb.mapSBCADResToSBCAD(sbRes)
 }
 
-func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SB, error) {
-	var sbs []SB
+func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SbCAD, error) {
+	var sbs []SbCAD
 
 	for _, res := range sbRes.Data {
 		s, err := sb.mapSbCADResArrayToStruct(res, sbRes.Fields)
@@ -76,13 +76,13 @@ func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SB, error) {
 	return sbs, nil
 }
 
-func (sb *SbCADMapper) mapSbCADResArrayToStruct(res []string, fields []string) (*SB, error) {
+func (sb *SbCADMapper) mapSbCADResArrayToStruct(res []string, fields []string) (*SbCAD, error) {
 	mappedSB := make(map[string]string)
 	for i, field := range res {
 		mappedSB[fields[i]] = field
 	}
 
-	result := &SB{}
+	result := &SbCAD{}
 	err := sb.Decoder.Decode(mappedSB, result)
 	if err != nil {
 		return nil, err
