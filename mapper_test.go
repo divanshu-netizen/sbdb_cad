@@ -1,4 +1,4 @@
-package sbdb
+package sbdb_cad
 
 import (
 	"bytes"

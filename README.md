@@ -115,7 +115,7 @@ type SmallBodyOptions struct {
 
 ```go
 imports(
-    sbdb "github.com/evancaplab/sbdb"
+    sbdb "github.com/evancaplab/sbdb_cad"
 )
 
 sbService := sbdb.NewSBService()

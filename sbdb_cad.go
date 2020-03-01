@@ -1,4 +1,4 @@
-package sbdb
+package sbdb_cad
 
 type SB struct {
 	Des       string `json:"destination"`
@@ -32,7 +32,7 @@ type SmallBodyOptions struct {
 	Nea                 bool   `json:"nea"`
 	Comet               bool   `json:"comet"`
 	NeaComet            bool   `json:"neaComet"`
-	Neo                 bool   `json:"sbdb"`
+	Neo                 bool   `json:"neo"`
 	Kind                string `json:"kind"`
 	Spk                 string `json:"spk"`
 	Designation         string `json:"designation"`
