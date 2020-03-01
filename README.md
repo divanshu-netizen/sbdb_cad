@@ -12,8 +12,8 @@ go get github.com/evancaplan/sbdb
 ```go
 type SmallBodyOptions struct {
     
-    // Default value: "now" for current date
-    // Exludes dates earlier than this date
+    	// Default value: "now" for current date
+    	// Exludes dates earlier than this date
 	DateMin             string `json:"dateMin"`
 
 	// Default value: "+60" to add 60 days to current date
@@ -118,13 +118,13 @@ imports(
     sbdb "github.com/evancaplab/sbdb_cad"
 )
 
-sbService := sbdb.NewSBService()
-sbo := sbdb.SmallBodyOptions{
-    // insert fields here
-}
-bodies, err := sbService.FindSBBy(sbo)
-if err != nil {
-    handler error
+func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error) {
+	sbService := sbdb.NewSBService()
+	bodies, err := sbService.FindSBBy(sbo)
+	if err != nil {
+    		return err, nil
+	}
+	return bodies
 }
 ```
 
