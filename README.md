@@ -1,11 +1,11 @@
-# SBDB 
+# SBDB CAD
 
 A Go Client for Nasa's Small Body Database Close-Approach API
 
 ## Installation
 
 ```bash
-go get github.com/evancaplan/sbdb
+go get github.com/evancaplan/sbdb_cad
 ```
 
 ## Search Options
@@ -115,12 +115,12 @@ type SmallBodyOptions struct {
 
 ```go
 imports(
-    sbdb "github.com/evancaplab/sbdb_cad"
+    sbdb_cad "github.com/evancaplab/sbdb_cad"
 )
 
-func FindSmallBodies(sbo sbdb.SmallBodyOptions) ([]sbdb.SB, error) {
-	sbService := sbdb.NewSBService()
-	bodies, err := sbService.FindSBBy(sbo)
+func FindSmallBodyCloseApproachData(sbo sbdb_cad.SmallBodyOptions) ([]sbdb.SBCAD, error) {
+	sbCADService := sbdb_cad.NewSbCADService()
+	bodies, err := sbCADService.FindSbCADBy(sbo)
 	if err != nil {
     		return err, nil
 	}
