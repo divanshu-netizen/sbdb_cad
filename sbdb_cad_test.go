@@ -16,10 +16,10 @@ func TestFindSBBy(t *testing.T) {
 		args            SmallBodyOptions
 		getterData      *http.Response
 		getterErr       error
-		mapperData      []SbCAD
+		mapperData      []SbCad
 		mapperErr       error
 		QueryStringData string
-		want            []SbCAD
+		want            []SbCad
 		wantErr         bool
 		err             error
 	}{
@@ -29,10 +29,10 @@ func TestFindSBBy(t *testing.T) {
 			args:            SmallBodyOptions{},
 			getterData:      new(http.Response),
 			getterErr:       nil,
-			mapperData:      []SbCAD{SbCAD{}, SbCAD{}},
+			mapperData:      []SbCad{SbCad{}, SbCad{}},
 			mapperErr:       nil,
 			QueryStringData: "test query string data",
-			want:            []SbCAD{SbCAD{}, SbCAD{}},
+			want:            []SbCad{SbCad{}, SbCad{}},
 			wantErr:         false,
 			err:             nil,
 		}, {
@@ -63,19 +63,19 @@ func TestFindSBBy(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			ns := &sbCADService{
+			ns := &SbCadService{
 				BaseUrl:            tt.baseUrl,
 				Getter:             &MockGetter{tt.getterData, tt.getterErr},
 				Mapper:             &MockMapper{tt.mapperData, tt.mapperErr},
 				QueryStringBuilder: &MockQueryStringBuilder{tt.QueryStringData},
 			}
-			got, err := ns.FindSBCADBy(tt.args)
+			got, err := ns.FindSbCadBy(tt.args)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("FindSBCADBy() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("FindSbCadBy() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindSBCADBy() got = %v, want %v", got, tt.want)
+				t.Errorf("FindSbCadBy() got = %v, want %v", got, tt.want)
 			}
 		})
 	}
@@ -91,11 +91,11 @@ func (mg *MockGetter) Get(url string) (resp *http.Response, err error) {
 }
 
 type MockMapper struct {
-	data []SbCAD
+	data []SbCad
 	err  error
 }
 
-func (mm *MockMapper) Map(response *http.Response) ([]SbCAD, error) {
+func (mm *MockMapper) Map(response *http.Response) ([]SbCad, error) {
 	return mm.data, mm.err
 }
 

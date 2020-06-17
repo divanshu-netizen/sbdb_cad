@@ -1,6 +1,6 @@
 package sbdb_cad
 
-type SbCAD struct {
+type SbCad struct {
 	Des       string `json:"destination"`
 	Orbit_id  string `json:"orbitId"`
 	Jd        string `json:"closeApproachJd"`
@@ -42,27 +42,27 @@ type SmallBodyOptions struct {
 	FullName            bool   `json:"fullName"`
 }
 
-type SbCADFinder interface {
-	FindSBCADBy(sbo SmallBodyOptions) ([]SbCAD, error)
+type SbCadFinder interface {
+	FindSbCadBy(sbo SmallBodyOptions) ([]SbCad, error)
 }
 
-type sbCADService struct {
+type SbCadService struct {
 	BaseUrl string
 	Getter
 	Mapper
 	QueryStringBuilder
 }
 
-func NewSBCADService() *sbCADService {
-	return &sbCADService{
+func NewSbCadService() *SbCadService {
+	return &SbCadService{
 		BaseUrl:            "https://ssd-api.jpl.nasa.gov/cad.api?",
 		Getter:             new(Requester),
-		Mapper:             NewSbCADMapper(),
+		Mapper:             NewSbCadMapper(),
 		QueryStringBuilder: NewQueryBuilder(),
 	}
 }
 
-func (ss *sbCADService) FindSBCADBy(sbo SmallBodyOptions) ([]SbCAD, error) {
+func (ss *SbCadService) FindSbCadBy(sbo SmallBodyOptions) ([]SbCad, error) {
 	res, err := ss.Getter.Get(ss.BaseUrl + ss.QueryStringBuilder.Build(&sbo))
 	if err != nil {
 		return nil, err

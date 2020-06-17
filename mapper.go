@@ -7,23 +7,25 @@ import (
 	"net/http"
 )
 
-type SbCADResponse struct {
-	Signature struct {
-		Version string `json:"version"`
-		Source  string `json:"source"`
-	} `json:"signature"`
-	Count  string     `json:"count"`
-	Fields []string   `json:"fields"`
-	Data   [][]string `json:"data"`
+type SbCadResponse struct {
+	Signature `json:"signature"`
+	Count     string     `json:"count"`
+	Fields    []string   `json:"fields"`
+	Data      [][]string `json:"data"`
+}
+
+type Signature struct {
+	Version string `json:"version"`
+	Source  string `json:"source"`
 }
 
 type Decoder interface {
 	Decode(input interface{}, output interface{}) error
 }
 
-type SbCADDecoder struct{}
+type SbCadDecoder struct{}
 
-func (sd *SbCADDecoder) Decode(input interface{}, output interface{}) error {
+func (sd *SbCadDecoder) Decode(input interface{}, output interface{}) error {
 	err := mapstructure.Decode(input, output)
 	if err != nil {
 		return err
@@ -33,21 +35,21 @@ func (sd *SbCADDecoder) Decode(input interface{}, output interface{}) error {
 }
 
 type Mapper interface {
-	Map(response *http.Response) ([]SbCAD, error)
+	Map(response *http.Response) ([]SbCad, error)
 }
 
-type SbCADMapper struct {
+type SbCadMapper struct {
 	Decoder
 }
 
-func NewSbCADMapper() *SbCADMapper {
-	return &SbCADMapper{
-		Decoder: new(SbCADDecoder),
+func NewSbCadMapper() *SbCadMapper {
+	return &SbCadMapper{
+		Decoder: new(SbCadDecoder),
 	}
 }
 
-func (sb *SbCADMapper) Map(res *http.Response) ([]SbCAD, error) {
-	sbRes := new(SbCADResponse)
+func (sb *SbCadMapper) Map(res *http.Response) ([]SbCad, error) {
+	sbRes := new(SbCadResponse)
 
 	err := json.NewDecoder(res.Body).Decode(sbRes)
 	if err != nil {
@@ -62,14 +64,14 @@ func (sb *SbCADMapper) Map(res *http.Response) ([]SbCAD, error) {
 		return nil, errors.New("api version has been updated. please contact maintainer of this library")
 	}
 
-	return sb.mapSBCADResToSBCAD(sbRes)
+	return sb.mapSbCadResToSbCad(sbRes)
 }
 
-func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SbCAD, error) {
-	var sbs []SbCAD
+func (sb *SbCadMapper) mapSbCadResToSbCad(sbRes *SbCadResponse) ([]SbCad, error) {
+	var sbs []SbCad
 
 	for _, res := range sbRes.Data {
-		s, err := sb.mapSbCADResArrayToStruct(res, sbRes.Fields)
+		s, err := sb.mapSbCadResArrayToStruct(res, sbRes.Fields)
 		if err != nil {
 			return nil, err
 		}
@@ -80,14 +82,14 @@ func (sb *SbCADMapper) mapSBCADResToSBCAD(sbRes *SbCADResponse) ([]SbCAD, error)
 	return sbs, nil
 }
 
-func (sb *SbCADMapper) mapSbCADResArrayToStruct(res []string, fields []string) (*SbCAD, error) {
-	mappedSB := make(map[string]string)
+func (sb *SbCadMapper) mapSbCadResArrayToStruct(res []string, fields []string) (*SbCad, error) {
+	mappedSb := make(map[string]string)
 	for i, field := range res {
-		mappedSB[fields[i]] = field
+		mappedSb[fields[i]] = field
 	}
 
-	result := &SbCAD{}
-	err := sb.Decoder.Decode(mappedSB, result)
+	result := &SbCad{}
+	err := sb.Decoder.Decode(mappedSb, result)
 	if err != nil {
 		return nil, err
 	}

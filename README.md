@@ -118,9 +118,9 @@ imports(
     sbdb_cad "github.com/evancaplab/sbdb_cad"
 )
 
-func FindSmallBodyCloseApproachData(sbo sbdb_cad.SmallBodyOptions) ([]sbdb.SBCAD, error) {
-	sbCADService := sbdb_cad.NewSbCADService()
-	bodies, err := sbCADService.FindSbCADBy(sbo)
+func FindSmallBodyCloseApproachData(sbo sbdb_cad.SmallBodyOptions) ([]sbdb.SbCad, error) {
+	SbCadService := sbdb_cad.NewSbCadService()
+	bodies, err := SbCadService.FindSbCadBy(sbo)
 	if err != nil {
     		return err, nil
 	}
