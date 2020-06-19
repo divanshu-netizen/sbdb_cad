@@ -122,7 +122,7 @@ func FindSmallBodyCloseApproachData(sbo sbdb_cad.SmallBodyOptions) ([]sbdb.SbCad
 	SbCadService := sbdb_cad.NewSbCadService()
 	bodies, err := SbCadService.FindSbCadBy(sbo)
 	if err != nil {
-    		return err, nil
+    		return nill, err
 	}
 	return bodies
 }
